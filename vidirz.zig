@@ -190,7 +190,7 @@ pub fn main() !void {
     // Read modified file
     {
         var temp = std.fs.cwd().openFile(temp_name, .{}) catch |e| die(
-            err_str ++ "unable to reopen tmporary: {s}\n",
+            err_str ++ "unable to reopen temporary: {s}\n",
             .{@errorName(e)},
         );
         defer temp.close();
@@ -221,7 +221,7 @@ pub fn main() !void {
 
             if (index > num_orig_entries)
                 die(
-                    err_str ++ "too big index in temrporary ({d} > {d})\n",
+                    err_str ++ "too big index in temporary ({d} > {d})\n",
                     .{ index, num_orig_entries },
                 );
 

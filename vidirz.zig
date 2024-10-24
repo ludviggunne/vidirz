@@ -79,7 +79,10 @@ pub fn main() !void {
                     'd' => dry_run = true,
                     'i' => interactive = true,
                     'f' => force = true,
-                    'h' => try stdout.print(help_fmt, .{me}),
+                    'h' => {
+                        try stdout.print(help_fmt, .{me});
+                        std.process.exit(0);
+                    },
                     else => {
                         die(
                             usage_fmt ++ extra ++ err_str ++ "unknown option '{1c}'\n",

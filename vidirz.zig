@@ -305,7 +305,7 @@ pub fn main() !void {
                                 continue;
                             };
                         }
-                        if (verbose) try stdout.print("rename {s} to {s}.\n", .{ entry.name, new_name });
+                        if (verbose) try stdout.print("rename    {s}    to    {s}.\n", .{ entry.name, new_name });
                     }
                 },
 
@@ -336,7 +336,7 @@ pub fn main() !void {
                                 };
                             }
                         }
-                        if (verbose) try stdout.print("delete {s}\n", .{entry.name});
+                        if (verbose) try stdout.print("delete    {s}\n", .{entry.name});
                     }
                 },
             }

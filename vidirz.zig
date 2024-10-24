@@ -263,6 +263,8 @@ pub fn main() !void {
             }
         }
 
+        if (dry_run) try stderr.print(warning_str ++ "dry run\n", .{});
+
         // Execute
         for (entries.items) |entry| {
             const stat = std.fs.cwd().statFile(entry.name) catch |e| {

@@ -5,7 +5,7 @@ const warning_str = "\x1b[33mwarning\x1b[0m: ";
 const temp_name = "vidirz.tmp";
 const default_editor = "vi";
 const usage_fmt = "Usage: {0s} [-v|-d|-i|-f|-h] [DIR]\n";
-const extra = "Run '{0s} -h' a for description of options.\n";
+const extra = "Run '{0s} -h' for a description of options.\n";
 const help_fmt = usage_fmt ++
     \\   DIR  Specify which directory to edit. Default is the current working directory.
     \\    -v  Verbose mode. Show me what's going on.

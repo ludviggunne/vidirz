@@ -7,7 +7,7 @@ const default_editor = "vi";
 const usage_fmt = "Usage: {0s} [-v|-d|-i|-f|-h] [DIR]\n";
 const extra = "Run '{0s} -h' a for description of options.\n";
 const help_fmt = usage_fmt ++
-    \\   DIR  Specify wich directory to edit. Default is the current working directory.
+    \\   DIR  Specify which directory to edit. Default is the current working directory.
     \\    -v  Verbose mode. Show me what's going on.
     \\    -d  Dry run. Like verbose but don't do anything.
     \\    -i  Interactive mode. Prompt before each action.

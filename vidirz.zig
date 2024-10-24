@@ -312,7 +312,7 @@ pub fn main() !void {
                 .delete => {
                     if (!interactive or try prompt("Delete {s}?", .{entry.name})) {
                         if (is_dir) {
-                            if (!force and !try prompt("Delete directory {s}?", .{entry.name}))
+                            if (!force and !interactive and !try prompt("Delete directory {s}?", .{entry.name}))
                                 continue;
                             if (!dry_run) {
                                 std.fs.cwd().deleteTree(entry.name) catch |e| {

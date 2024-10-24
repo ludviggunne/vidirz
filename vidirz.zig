@@ -288,7 +288,7 @@ pub fn main() !void {
             };
 
             switch (entry.action) {
-                .keep => if (verbose) try stdout.print("keep   {s}\n", .{entry.name}),
+                .keep => {},
 
                 .rename => |new_name| {
                     if (!interactive or try prompt(

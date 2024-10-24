@@ -4,11 +4,12 @@ const err_str = "\x1b[31merror\x1b[0m: ";
 const warning_str = "\x1b[33mwarning\x1b[0m: ";
 const temp_name = "vidirz.tmp";
 const default_editor = "vi";
-const usage_fmt = "Usage: {0s} [-v|-i|-f|-h] [DIR]\n";
+const usage_fmt = "Usage: {0s} [-v|-d|-i|-f|-h] [DIR]\n";
 const extra = "Run '{0s} -h' a for description of options.\n";
 const help_fmt = usage_fmt ++
     \\   DIR  Specify wich directory to edit. Default is the current working directory.
     \\    -v  Verbose mode. Show me what's going on.
+    \\    -d  Dry run. Like verbose but don't do anything.
     \\    -i  Interactive mode. Prompt before each action.
     \\    -f  Force. Remove directories without prompting.
     \\    -h  Show this help message.
@@ -59,6 +60,7 @@ pub fn main() !void {
     const stderr = std.io.getStdErr().writer();
 
     var verbose = false;
+    var dry_run = false;
     var interactive = false;
     var force = false;
 
@@ -74,6 +76,7 @@ pub fn main() !void {
             for (opts) |opt| {
                 switch (opt) {
                     'v' => verbose = true,
+                    'd' => dry_run = true,
                     'i' => interactive = true,
                     'f' => force = true,
                     'h' => try stdout.print(help_fmt, .{me}),
@@ -96,7 +99,7 @@ pub fn main() !void {
     }
 
     if (force) interactive = false;
-    if (interactive) verbose = false;
+    if (interactive and !dry_run) verbose = false;
 
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
@@ -287,14 +290,16 @@ pub fn main() !void {
                         "Rename '{s}' to '{s}'?",
                         .{ entry.name, new_name },
                     )) {
-                        std.fs.cwd().rename(entry.name, new_name) catch |e| {
-                            try stderr.print(
-                                err_str ++ "unable to rename {s}: {s}\n",
-                                .{ entry.name, @errorName(e) },
-                            );
-                            exit_code = 1;
-                            continue;
-                        };
+                        if (!dry_run) {
+                            std.fs.cwd().rename(entry.name, new_name) catch |e| {
+                                try stderr.print(
+                                    err_str ++ "unable to rename {s}: {s}\n",
+                                    .{ entry.name, @errorName(e) },
+                                );
+                                exit_code = 1;
+                                continue;
+                            };
+                        }
                         if (verbose) try stdout.print("rename {s} to {s}.\n", .{ entry.name, new_name });
                     }
                 },
@@ -304,23 +309,27 @@ pub fn main() !void {
                         if (is_dir) {
                             if (!force and !try prompt("Delete directory {s}?", .{entry.name}))
                                 continue;
-                            std.fs.cwd().deleteDir(entry.name) catch |e| {
-                                try stderr.print(
-                                    err_str ++ "unable to delete {s}: {s}\n",
-                                    .{ entry.name, @errorName(e) },
-                                );
-                                exit_code = 1;
-                                continue;
-                            };
+                            if (!dry_run) {
+                                std.fs.cwd().deleteTree(entry.name) catch |e| {
+                                    try stderr.print(
+                                        err_str ++ "unable to delete {s}: {s}\n",
+                                        .{ entry.name, @errorName(e) },
+                                    );
+                                    exit_code = 1;
+                                    continue;
+                                };
+                            }
                         } else {
-                            std.fs.cwd().deleteFile(entry.name) catch |e| {
-                                try stderr.print(
-                                    err_str ++ "unable to delete {s}: {s}\n",
-                                    .{ entry.name, @errorName(e) },
-                                );
-                                exit_code = 1;
-                                continue;
-                            };
+                            if (!dry_run) {
+                                std.fs.cwd().deleteFile(entry.name) catch |e| {
+                                    try stderr.print(
+                                        err_str ++ "unable to delete {s}: {s}\n",
+                                        .{ entry.name, @errorName(e) },
+                                    );
+                                    exit_code = 1;
+                                    continue;
+                                };
+                            }
                         }
                         if (verbose) try stdout.print("delete {s}\n", .{entry.name});
                     }
